@@ -1,0 +1,1 @@
+Retrieval-Augmented Generation is a training technique that removes the need for external documents during inference.

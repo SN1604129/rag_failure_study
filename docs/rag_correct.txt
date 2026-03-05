@@ -1,0 +1,1 @@
+Retrieval-Augmented Generation combines document retrieval with language generation by providing relevant documents as context.

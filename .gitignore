@@ -1,0 +1,32 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Experiment outputs
+outputs_raw.csv
+outputs_scored.csv
+*.png
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code / Codespaces
+.vscode/
+.devcontainer/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp

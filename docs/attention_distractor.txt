@@ -1,0 +1,1 @@
+Attention mechanisms force the model to only consider the last token of a sequence when generating outputs.

@@ -1,0 +1,17 @@
+[
+{"id":"q1","question":"In what year was the Transformer architecture introduced?"},
+{"id":"q2","question":"Who introduced the Transformer architecture?"},
+{"id":"q3","question":"What does BERT stand for?"},
+{"id":"q4","question":"In what year was BERT introduced?"},
+{"id":"q5","question":"What is Retrieval-Augmented Generation?"},
+{"id":"q6","question":"What problem does attention solve in neural networks?"},
+{"id":"q7","question":"What is FAISS used for?"},
+{"id":"q8","question":"What are text embeddings used for?"},
+{"id":"q9","question":"What is reranking in information retrieval?"},
+{"id":"q10","question":"Why do we split documents into chunks for retrieval?"},
+{"id":"q11","question":"What is the main idea behind RAG systems?"},
+{"id":"q12","question":"What is the role of vector databases in RAG?"},
+{"id":"q13","question":"Why can Top-1 retrieval be risky?"},
+{"id":"q14","question":"How does Top-3 retrieval improve reliability?"},
+{"id":"q15","question":"How can retrieval noise affect LLM answers?"}
+]
