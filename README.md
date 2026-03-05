@@ -1,53 +1,168 @@
-# RAG Failure Study (1-Day Mini Research)
+# RAG Failure Study: When Retrieval Hurts Generation
 
-A small, research-style experiment to test **when Retrieval-Augmented Generation (RAG) helps and when it fails**.  
-Instead of only reporting “RAG reduces hallucinations”, this repo introduces **controlled distractor documents** to measure how retrieval noise can *mislead* a model.
+This repository contains a small experimental study exploring how retrieval quality affects the reliability of Retrieval-Augmented Generation (RAG) systems.
 
-## Research Question
-**Does RAG always improve factual accuracy, or can incorrect retrieval introduce new errors?**
+RAG is commonly used to improve LLM answers by retrieving external documents and providing them as context. However, when retrieval introduces noisy or misleading information, it can negatively influence generation.
 
-## Hypotheses
-- **H1:** RAG with **Top-1 retrieval** can be *worse than LLM-only* when retrieval returns a plausible but incorrect document.
-- **H2:** **Top-3 retrieval** reduces this risk by adding redundancy (more chances to retrieve a correct source).
-- **H3 (optional):** A **guardrail** (“cite evidence or say I don’t know”) reduces confident wrong answers.
+This experiment explores how different retrieval strategies behave when the retrieved context is imperfect.
 
-## Experiment Conditions
-We compare four conditions on the same question set:
-1. **LLM_ONLY** — No retrieval
-2. **RAG_TOP1** — Retrieve 1 document
-3. **RAG_TOP3** — Retrieve 3 documents
-4. **RAG_TOP3_GUARDED** — Retrieve 3 docs + “use context only; otherwise say I don’t know” + citations
-
-## Controlled Knowledge Base
-The `docs/` folder contains:
-- **Correct documents** (ground truth)
-- **Distractor documents** (plausible but wrong on one key fact)
-
-This makes it possible to observe distinct failure modes:
-- **Retrieval error**: retriever selects distractor(s)
-- **Copy error**: model copies wrong distractor fact
-- **Grounding failure**: correct docs are retrieved but model ignores/misuses them
-- **Abstained**: guarded model refuses due to insufficient evidence
-
-## Metrics
-You will score outputs in `outputs_scored.csv`:
-- **Accuracy** (`is_correct`): 1 if factually correct else 0
-- **Faithfulness** (`is_faithful`): 1 if answer is supported by retrieved context (RAG conditions)
-- **Failure type** (`failure_type`): `none | retrieval_error | copy_error | grounding_failure | abstained`
-
-Charts generated:
-- `accuracy.png`
-- `faithfulness.png`
-- `failure_types.png`
+The goal of this project is not to create a large benchmark, but to illustrate potential RAG failure modes in a controlled experimental setup.
 
 ---
 
-# Quickstart
+# Experiment Overview
 
-## 1) Setup
-```bash
-python -m venv .venv
-source .venv/bin/activate   # mac/linux
-# .venv\Scripts\activate    # windows
+The experiment evaluates how different retrieval strategies affect answer correctness and failure behaviour.
 
-pip install -U openai faiss-cpu sentence-transformers pandas matplotlib tqdm python-dotenv
+A small question set is used together with a curated knowledge base and intentionally misleading distractor documents.
+
+Four system configurations are compared:
+
+**LLM_ONLY**  
+The baseline model answers questions without retrieval.
+
+**RAG_TOP1**  
+The model retrieves the single highest-ranked document and uses it as context.
+
+**RAG_TOP3**  
+The model retrieves the top three documents and uses them as context.
+
+**RAG_TOP3_GUARDED**  
+The same retrieval setup as RAG_TOP3, but the model is allowed to abstain when the context appears unreliable.
+
+The experiment measures:
+
+- Answer correctness
+- Grounding / faithfulness to retrieved context
+- Failure types such as retrieval errors, grounding errors, and abstentions
+
+---
+
+# Dataset
+
+The evaluation uses:
+
+- 15 technical questions related to topics such as Transformers, BERT, RAG, FAISS, embeddings, and attention mechanisms.
+- A small knowledge base containing documents with correct information.
+- Additional distractor documents designed to simulate retrieval noise.
+
+These distractor documents intentionally contain misleading or incorrect statements to test how RAG behaves under imperfect retrieval conditions.
+
+---
+
+# Evaluation Pipeline
+
+The experiment follows these steps:
+
+1. Load questions and document corpus
+2. Build embeddings for documents
+3. Use FAISS for similarity search
+4. Retrieve top-k documents depending on the condition
+5. Generate answers using the LLM
+6. Automatically label outputs using rule-based evaluation
+7. Analyze correctness and failure types
+8. Generate visualizations summarizing the results
+
+---
+
+# Key Observations
+
+In this small experimental setting:
+
+- Top-1 retrieval sometimes reduced accuracy compared to the baseline LLM.
+- Retrieving multiple documents partially recovered performance.
+- Guardrails reduced incorrect answers but increased abstentions.
+
+These results suggest that RAG performance can be sensitive to retrieval quality and context selection.
+
+---
+
+# Repository Structure
+
+
+rag_failure_study/
+│
+
+├── docs/ # Knowledge base and distractor documents
+
+├── questions.json # Question set used for evaluation
+
+├── run_experiment.py # Runs the RAG experiment
+
+├── auto_label.py # Automatically labels outputs
+
+├── make_onepager.py # Generates summary visualizations
+
+│
+
+├── outputs_raw.csv # Raw model outputs
+
+├── outputs_scored.csv # Evaluated results
+
+├── one_pager.png # Final experiment summary figure
+
+│
+
+└── README.md
+
+
+---
+
+# Running the Experiment
+
+Install dependencies:
+
+
+pip install -r requirements.txt
+
+
+Run the experiment:
+
+
+python run_experiment.py
+
+
+Score the outputs:
+
+
+python auto_label.py
+
+
+Generate the visualization:
+
+
+python make_onepager.py
+
+
+This will produce the final summary figure:
+
+
+one_pager.png
+
+
+---
+
+# Limitations
+
+This is a small exploratory study with a limited dataset (15 questions).  
+The goal is to illustrate potential RAG failure modes rather than provide statistically strong conclusions.
+
+Results may vary with different datasets, models, or retrieval systems.
+
+---
+
+# Future Work
+
+Possible extensions include:
+
+- Larger evaluation datasets
+- Multiple LLMs
+- Reranking strategies
+- Retrieval filtering
+- Improved guardrail mechanisms
+
+---
+
+# License
+
+This project is intended for educational and experimental purposes.
